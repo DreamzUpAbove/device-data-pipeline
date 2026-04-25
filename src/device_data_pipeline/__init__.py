@@ -5,5 +5,14 @@ from device_data_pipeline.models import (
     MeasurementRecord,
     SweepParameter,
 )
+from device_data_pipeline.storage import (
+    save_record,
+    load_record
+)
 
-__all__ = ["MeasurementRecord", "MeasurementMetaData", "SweepParameter"]
+__all__ = ["MeasurementRecord", 
+           "MeasurementMetaData", 
+           "SweepParameter",
+           "save_record", 
+           "load_record",
+           ]
