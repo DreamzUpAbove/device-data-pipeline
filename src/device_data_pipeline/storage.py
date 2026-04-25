@@ -16,12 +16,11 @@ from __future__ import annotations
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Union
 
 import numpy as np
 
 
-from device_data_pipeline import MeasurementMetaData, MeasurementRecord
+from .models import MeasurementMetaData, MeasurementRecord
 
 # 18 decimal places in scientific notations preserves full float64 precision.
 _FLOAT_FMT = "%.18e"
@@ -38,8 +37,8 @@ def _make_stem(experiment_type: str) -> str:
 
 def save_record(
     record: MeasurementRecord,
-    directory: Union[str, Path] = ".",
-    name: Union[str, None] = None,
+    directory: str | Path = ".",
+    name: str | None = None,
 ) -> Path:
     """Save a ``MeasurementRecord`` to disk as CSV (data) and JSON (metadata)
 
@@ -54,6 +53,7 @@ def save_record(
         if it does not exist
         name: Custom filename to be used. If ``None`` (default),
         a unique timestamp name is generated automatically.
+        Note: If a custom name is provided, and the file exists, will be overwritten.
 
     Returns:
         The full base path (stem), that was used so caller knows
@@ -117,16 +117,16 @@ def save_record(
     return base_path
 
 
-def load_record(path: Union[str, Path]) -> MeasurementRecord:
+def load_record(path: str | Path) -> MeasurementRecord:
     """Load a MeasurementRecord from the disk.
 
     Expects two files created by :func:`save_record`
         - ``{path}_data.csv``
         - ``{path}_metadata.json``
-
-    **Memory Warning:** Loads entire csv into active
-    memory mapping via `numpy.loadtxt`. For substantial scientific datasets,
-    this will trigger `MemoryError`.
+    
+    Warning: 
+        Loads entire csv into active memory mapping via `numpy.loadtxt`. 
+        For substantial scientific datasets, this will trigger `MemoryError`.
 
     Args:
         path: Base file path as returned by :func:`save_record`.
@@ -143,10 +143,15 @@ def load_record(path: Union[str, Path]) -> MeasurementRecord:
     csv_path = path.parent / f"{path.name}_data.csv"
     metadata_path = path.parent / f"{path.name}_metadata.json"
 
-    # Load metadata
+
+    if not csv_path.exists():
+        raise FileNotFoundError(f"Data file not found at {csv_path}")
+    
     if not metadata_path.exists():
         raise FileNotFoundError(f"Metadata file not found at {metadata_path}")
 
+
+    # Load metadata
     try:
         with open(metadata_path, encoding="utf-8") as f:
             meta_dict = json.load(f)
@@ -162,8 +167,6 @@ def load_record(path: Union[str, Path]) -> MeasurementRecord:
     try:
         data_matrix = np.loadtxt(csv_path, delimiter=",", skiprows=1, ndmin=2)
     except OSError as e:
-        if isinstance(e, FileNotFoundError):
-            raise
         raise RuntimeError(
             f"Failed to parse CSV data matrix accurately from {csv_path}: {e}"
         ) from e
