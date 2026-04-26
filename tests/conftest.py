@@ -1,4 +1,4 @@
-"""Shared tests fixures for device_data_pipeline tests."""
+"""Shared tests fixtures for device_data_pipeline tests."""
 
 from datetime import datetime, timedelta
 import numpy as np

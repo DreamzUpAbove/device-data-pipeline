@@ -123,9 +123,9 @@ def load_record(path: str | Path) -> MeasurementRecord:
     Expects two files created by :func:`save_record`
         - ``{path}_data.csv``
         - ``{path}_metadata.json``
-    
-    Warning: 
-        Loads entire csv into active memory mapping via `numpy.loadtxt`. 
+
+    Warning:
+        Loads entire csv into RAM via `numpy.loadtxt`.
         For substantial scientific datasets, this will trigger `MemoryError`.
 
     Args:
@@ -143,13 +143,11 @@ def load_record(path: str | Path) -> MeasurementRecord:
     csv_path = path.parent / f"{path.name}_data.csv"
     metadata_path = path.parent / f"{path.name}_metadata.json"
 
-
     if not csv_path.exists():
         raise FileNotFoundError(f"Data file not found at {csv_path}")
-    
+
     if not metadata_path.exists():
         raise FileNotFoundError(f"Metadata file not found at {metadata_path}")
-
 
     # Load metadata
     try:

@@ -1,7 +1,7 @@
 """
 Data models for scientific measurement recording and management.
 
-Provides dataclasses that represent complete structure 
+Provides dataclasses that represent complete structure
 of an experiment measurement.
 """
 
@@ -73,7 +73,7 @@ class MeasurementMetaData:
     def __post_init__(self) -> None:
         if self.end_time < self.start_time:
             raise ValueError(
-                f"end_time ({self.end_time.isoformat()} must be >= "
+                f"end_time ({self.end_time.isoformat()}) must be >= "
                 f"start_time ({self.start_time.isoformat()})"
             )
 
@@ -176,11 +176,11 @@ class MeasurementRecord:
             if self.measured_data is sweep:
                 raise ValueError(
                     f"measured_data and sweep_data[{i}] are the exact same object reference. "
-                    f"Please duplicate the array if the measurement values perfectly mirrors the swept values explicitly."
+                    f"Please duplicate the array if the measurement values perfectly mirror the swept values explicitly."
                 )
             if self.measured_data.size != sweep.size:
                 raise ValueError(
                     f"Size mismatch: measured_data has {self.measured_data.size} elements, "
                     f"but sweep_data[{i}] has {sweep.size} elements. "
-                    f"All elements must contain the same total number of the element to stack."
+                    f"All elements must contain the same total number of the elements to stack."
                 )
