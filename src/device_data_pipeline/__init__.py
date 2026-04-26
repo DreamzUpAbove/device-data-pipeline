@@ -9,10 +9,12 @@ from device_data_pipeline.storage import (
     save_record,
     load_record
 )
+from device_data_pipeline.adapters import build_record
 
 __all__ = ["MeasurementRecord", 
            "MeasurementMetaData", 
            "SweepParameter",
            "save_record", 
            "load_record",
+           "build_record"
            ]
