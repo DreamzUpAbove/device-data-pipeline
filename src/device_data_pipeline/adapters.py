@@ -36,7 +36,7 @@ def build_record(raw: dict[str, Any]) -> MeasurementRecord:
     sweep_labels: list[SweepParameter] = []
     sweep_arrays: list[np.ndarray] = []
 
-    if swept_params_raw:
+    if mode != "time-trace" and swept_params_raw:
         if isinstance(swept_params_raw, str):
             sweep_labels = [SweepParameter(name=swept_params_raw)]
         elif isinstance(swept_params_raw, list):

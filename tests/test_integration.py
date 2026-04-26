@@ -123,3 +123,20 @@ class TestFullPipeline:
         }
         with pytest.raises(KeyError, match="'measured' key missing"):
             build_record(bad_raw)
+
+    def test_time_trace_from_helper_produces_no_sweep_axis(self):
+        """Verify the adapter produces zero sweeps for time-trace,
+        even though the original helper emits swept_params='time'."""
+        for seed in range(50):
+            np.random.seed(seed)
+            raw = generate_measurement_data()
+            if raw["mode"] == "time-trace":
+                record = build_record(raw)
+                assert len(record.sweep_data) == 0, (
+                    "adapter must strip sweep data for time-trace"
+                )
+                assert len(record.metadata.sweep_parameters) == 0, (
+                    "adapter must strip sweep labels for time-trace"
+                )
+                return
+        pytest.fail("No time-trace generated in 50 seeds — increase range")
